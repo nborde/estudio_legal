@@ -39,7 +39,7 @@ REST.prototype.connectPostgres = function () {
     var conString = "postgres://postgres:''@localhost/d1c9jmonqhru2t";
     var conStringHeroku = "postgres://twnafearoydifz:iZKsoKu6RgyYtlFaVxUvJlh-aC@ec2-54-83-59-110.compute-1.amazonaws.com:5432/d1c9jmonqhru2t";
 
-   var pool =  pg.connect(conString, function(err, client, done) {
+   var pool =  pg.connect((process.env.DATABASE_URL || conString), function(err, client, done) {
        if (err) {
            self.stop(err);
        } else {
