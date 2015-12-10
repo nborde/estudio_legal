@@ -2,10 +2,10 @@
   "name": "MiEstudioLegal",
   "version": "0.0.1",
   "description":"Mi estudio legal",
-  "main":"server.js",
+  "main":"Server.js",
   "author":"Nicolas Bordenave",
   "scripts": {
-    "start": "node Server.js"
+    "start": "node server.js"
   },
   "dependencies": {
     "express": "~4.12.2",
