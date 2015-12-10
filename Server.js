@@ -36,8 +36,8 @@ REST.prototype.connectMysql = function () {
 
 REST.prototype.connectPostgres = function () {
     var self = this;
-    var conString = "postgres://postgres:''@localhost/d1c9jmonqhru2t";
-    var conStringHeroku = "postgres://twnafearoydifz:iZKsoKu6RgyYtlFaVxUvJlh-aC@ec2-54-83-59-110.compute-1.amazonaws.com:5432/d1c9jmonqhru2t";
+    //var conString = "postgres://postgres:''@localhost/d1c9jmonqhru2t";
+    var conString = "postgres://jcdahlngnwpxgo:1EXHw_a_pIDWUCm1slcjQel6m7@ec2-54-83-59-203.compute-1.amazonaws.com:5432/dad25cup395vqk";
 
    var pool =  pg.connect((process.env.DATABASE_URL || conString), function(err, client, done) {
        if (err) {
