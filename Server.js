@@ -3,12 +3,14 @@ var mysql = require("mysql");
 var bodyParser = require("body-parser");
 var md5 = require('MD5');
 var rest = require("./REST.js");
+var pg = require('pg');
 var app = express();
 app.use(express.static(__dirname + '/public'));
 
 function REST() {
     var self = this;
-    self.connectMysql();
+    //self.connectMysql();
+    self.connectPostgres();
 };
 
 
@@ -31,6 +33,23 @@ REST.prototype.connectMysql = function () {
     });
 }
 
+
+REST.prototype.connectPostgres = function () {
+    var self = this;
+    var conString = "postgres://postgres:''@localhost/d1c9jmonqhru2t";
+    var conStringHeroku = "postgres://twnafearoydifz:iZKsoKu6RgyYtlFaVxUvJlh-aC@ec2-54-83-59-110.compute-1.amazonaws.com:5432/d1c9jmonqhru2t";
+
+   var pool =  pg.connect(conString, function(err, client, done) {
+       if (err) {
+           self.stop(err);
+       } else {
+           self.configureExpress(client);
+       }
+    });
+}
+
+
+
 REST.prototype.configureExpress = function (connection) {
     var self = this;
     app.use(bodyParser.urlencoded({extended: true}));
@@ -46,7 +65,6 @@ REST.prototype.configureExpress = function (connection) {
 
 REST.prototype.startServer = function () {
     var port = Number(process.env.PORT || 3000);
-    //app.listen(3000,function(){
     app.listen(port, function () {
         console.log("All right ! I am alive at Port 3000.");
     });

@@ -1,5 +1,6 @@
-var mysql   = require("mysql");
+//var mysql   = require("mysql");
 var nodemailer = require("nodemailer");
+var pg = require('pg');
 
 function REST_ROUTER(router,connection,md5) {
     var self = this;
@@ -44,49 +45,44 @@ function sendEmail(req, res){
 REST_ROUTER.prototype.handleRoutes = function(router,connection,md5) {
     var self = this;
 
-  //  router.get('/home', function(req, res) {
-        //res.sendfile('./font-awesome/index.html'); // load the single view file (angular will handle the page changes on the front-end)
-    //});
     router.get("/",function(req,res){
         res.json({"Message" : "Hello World !"});
     });
 
     router.get("/users",function(req,res){
-        var query = "SELECT * FROM ??";
-        var table = ["user_login"];
-        query = mysql.format(query,table);
+        var results = [];
+        var query = "SELECT * FROM user_login";
+
         connection.query(query,function(err,rows){
             if(err) {
-                //res.json({"Error" : true, "Message" : "Error executing MySQL query"});
-                res.status(400).json({"Message" : "Error executing MySQL query | " + err.message});
+                res.status(400).json({"Message" : "Error executing PG query | " + err.message});
             } else {
-                res.status(200).json({"Message" : "Success", "Users" : rows});
+                res.status(200).json({"Message" : "Success", "Users" : rows.rows});
             }
         });
     });
 
     router.get("/users/:user_id",function(req,res){
-        var query = "SELECT * FROM ?? WHERE ??=?";
-        var table = ["user_login","user_id",req.params.user_id];
-        query = mysql.format(query,table);
-        connection.query(query,function(err,rows){
+        var results = [];
+        var sqlquery = "SELECT * FROM user_login where user_id = $1";
+        var id = req.params.user_id;
+
+        connection.query(sqlquery, [id],function(err,rows){
             if(err) {
-                //res.json({"Error" : true, "Message" : "Error executing MySQL query"});
-                res.status(400).json({"Message" : "Error executing MySQL query | " + err.message});
+                res.status(400).json({"Message" : "Error executing PG query | " + err.message});
             } else {
-                res.status(200).json({"Error" : false, "Message" : "Success", "Users" : rows});
+                res.status(200).json({"Message" : "Success", "Users" : rows.rows});
             }
         });
     });
 
     router.post("/users",function(req,res){
-        var query = "INSERT INTO ??(??,??) VALUES (?,?)";
-        var table = ["user_login","user_email","user_password",req.body.email,md5(req.body.password)];
-        query = mysql.format(query,table);
-        connection.query(query,function(err,rows){
+        var results = [];
+        var sqlquery = "INSERT INTO user_login(user_email, user_password) VALUES ($1,$2)";
+        var data = {email: req.body.email, password : md5(req.body.password)};
+        connection.query(sqlquery, [data.email, data.password],function(err,rows){
             if(err) {
-                //res.json({"Error" : true, "Message" : "Error executing MySQL query | " + err.message});
-                res.status(400).json({"Message" : "Error executing MySQL query | " + err.message});
+                res.status(400).json({"Message" : "Error executing PG query | " + err.message});
                 console.log(err.message);
             } else {
 
@@ -94,16 +90,14 @@ REST_ROUTER.prototype.handleRoutes = function(router,connection,md5) {
                 console.log("User inserted : "+req.body.email);
             }
         });
-
     });
 
     router.put("/users",function(req,res){
-        var query = "UPDATE ?? SET ?? = ? WHERE ?? = ?";
-        var table = ["user_login","user_password",md5(req.body.password),"user_email",req.body.email];
-        query = mysql.format(query,table);
-        connection.query(query,function(err,rows){
+        var query = "UPDATE user_login SET user_password = $1 WHERE user_email = $2";
+        var data = {email: req.body.email, password : md5(req.body.password)};
+        connection.query(query, [data.password, data.email],function(err,rows){
             if(err) {
-                res.status(400).json({"Message" : "Error executing MySQL query | " + err.message});
+                res.status(400).json({"Message" : "Error executing PG query | " + err.message});
             } else {
                 res.status(200).json({"Message" : "Updated the password for email "+req.body.email});
             }
@@ -111,18 +105,17 @@ REST_ROUTER.prototype.handleRoutes = function(router,connection,md5) {
     });
 
     router.delete("/users/:email",function(req,res){
-        var query = "DELETE from ?? WHERE ??=?";
-        var table = ["user_login","user_email",req.params.email];
-        query = mysql.format(query,table);
-        connection.query(query,function(err,rows){
+        var query = "DELETE from user_login WHERE user_email = ($1)";
+        var data = {email: req.params.email};
+        connection.query(query, [data.email],function(err,rows){
             if(err) {
-                res.json({"Error" : true, "Message" : "Error executing MySQL query"});
-                res.status(400).json({"Message" : "Error executing MySQL query | " + err.message});
+                res.status(400).json({"Message" : "Error executing PG query | " + err.message});
             } else {
                 res.status(200).json({"Message" : "Deleted the user with email "+req.params.email});
             }
         });
     });
+
 
     router.post("/send",function(req,res){
         sendEmail(req,res);
