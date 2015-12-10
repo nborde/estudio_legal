@@ -45,9 +45,9 @@ function sendEmail(req, res){
 REST_ROUTER.prototype.handleRoutes = function(router,connection,md5) {
     var self = this;
 
-    router.get("/",function(req,res){
+/*    router.get("/",function(req,res){
         res.json({"Message" : "Hello World !"});
-    });
+    });*/
 
     router.get("/users",function(req,res){
         var results = [];
