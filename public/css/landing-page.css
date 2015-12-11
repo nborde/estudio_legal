@@ -187,14 +187,20 @@ ul#iconos li#icono:hover {
 }
 ul#iconos li#icono.primera {
 	background-image: url("../img/icono-automatizacion-140x140.png");
+	background-repeat: no-repeat;
+	background-size: 60% auto;
 	height: auto;
 }
 ul#iconos li#icono.segunda {
 	background-image: url("../img/icono-integracion-140x140.png");
+	background-repeat: no-repeat;
+	background-size: 60% auto;
 	height: auto;
 }
 ul#iconos li#icono.tercera {
 	background-image: url("../img/icono-logistica-140x140.png");
+	background-repeat: no-repeat;
+	background-size: 60% auto;
 	height: auto;
 }
 li#icono span {
