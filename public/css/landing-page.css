@@ -79,7 +79,8 @@ body, h1, h2, h3, h4, h5, h6 {
 
 .content-section-a {
 	background-color: #f8f8f8;
-	padding: 50px 0;
+	/*padding: 50px 0;*/
+	padding: 100% 0;
 }
 
 .content-section-b {
@@ -186,12 +187,15 @@ ul#iconos li#icono:hover {
 }
 ul#iconos li#icono.primera {
 	background-image: url("../img/icono-automatizacion-140x140.png");
+	height: auto;
 }
 ul#iconos li#icono.segunda {
 	background-image: url("../img/icono-integracion-140x140.png");
+	height: auto;
 }
 ul#iconos li#icono.tercera {
 	background-image: url("../img/icono-logistica-140x140.png");
+	height: auto;
 }
 li#icono span {
 	font-size: 1.5em;
