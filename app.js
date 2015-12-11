@@ -9,35 +9,13 @@ app.use(express.static(__dirname + '/public'));
 
 function REST() {
     var self = this;
-    //self.connectMysql();
     self.connectPostgres();
 };
 
-
-REST.prototype.connectMysql = function () {
-    var self = this;
-    var pool = mysql.createPool({
-        connectionLimit: 100,
-        host: 'localhost',
-        user: 'root',
-        password: 'admin',
-        database: 'restful_api_demo',
-        debug: false
-    });
-    pool.getConnection(function (err, connection) {
-        if (err) {
-            self.stop(err);
-        } else {
-            self.configureExpress(connection);
-        }
-    });
-}
-
-
 REST.prototype.connectPostgres = function () {
     var self = this;
-    var conString = "postgres://postgres:admin@localhost/estudio_legal";
-    //var conString = "postgres://postgres:''@localhost/d1c9jmonqhru2t";
+    //var conString = "postgres://postgres:admin@localhost/estudio_legal";
+    var conString = "postgres://postgres:''@localhost/d1c9jmonqhru2t";
     //var conString = "postgres://jcdahlngnwpxgo:1EXHw_a_pIDWUCm1slcjQel6m7@ec2-54-83-59-203.compute-1.amazonaws.com:5432/dad25cup395vqk";
 
     var pool =  pg.connect((process.env.DATABASE_URL || conString), function(err, client, done) {
@@ -60,6 +38,22 @@ REST.prototype.configureExpress = function (connection) {
     app.get('*', function (req, res) {
         res.sendfile('./public/index.html'); // load the single view file (angular will handle the page changes on the front-end)
     });
+
+    // catch 404 and forward to error handler
+    app.use(function(req, res, next) {
+        var err = new Error('Not Found');
+        err.status = 404;
+        next(err);
+    });
+
+    app.use(function(err, req, res, next) {
+        res.status(err.status || 500);
+        res.render('error', {
+            message: err.message,
+            error: {}
+        });
+    });
+
     var rest_router = new rest(router, connection, md5);
     self.startServer();
 }
